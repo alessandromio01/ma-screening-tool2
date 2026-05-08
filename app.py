@@ -97,3 +97,48 @@ if st.button("Genera Raccomandazioni e Analizza Rischio"):
         st.markdown('</div>', unsafe_allow_html=True)
         
         st.subheader("📋 Shortlist Strategica & Analisi Predittiva")
+        
+        # Preparazione DataFrame per la visualizzazione
+        display_df = results[['acquired_company', 'target_main_category', 'country_hq', 
+                              'target_age_at_acquisition', 'total_funding_usd', 'Deal Score', 'Score_Num']].copy()
+        
+        display_df.columns = ['Nome Target', 'Settore', 'Paese', 'Età (Anni)', 'Capitale (USD)', 'RF Deal Score', 'Score_Num']
+        
+        # Formattazione estetica dei dati
+        display_df['Età (Anni)'] = display_df['Età (Anni)'].apply(lambda x: f"{x:.1f}")
+        display_df['Capitale (USD)'] = display_df['Capitale (USD)'].apply(lambda x: f"${int(x):,}")
+        
+        # Funzione per i colori degli Score
+        def color_score(val):
+            try:
+                score = float(str(val).replace('%', ''))
+                if score >= 70: return 'color: #00CC66; font-weight: bold'
+                if score <= 40: return 'color: #FF4B4B; font-weight: bold'
+                return 'color: #FFA500; font-weight: bold'
+            except: return ''
+
+        # Creiamo la tabella finale escludendo fisicamente la colonna Score_Num
+        # Questo risolve i problemi di visualizzazione una volta per tutte
+        final_table = display_df.drop(columns=['Score_Num'])
+        
+        st.dataframe(final_table.style.map(color_score, subset=['RF Deal Score']), 
+                     use_container_width=True, 
+                     hide_index=True)
+        
+        # Bottone Download
+        csv = final_table.to_csv(index=False).encode('utf-8')
+        st.download_button("📥 Scarica Report", data=csv, file_name=f"report_{bidder}.csv", mime="text/csv")
+        
+        # GRAFICO
+        st.markdown("---")
+        st.subheader("🔍 Mappa Visuale del Mercato")
+        fig = px.scatter(
+            results, x='total_funding_usd', y='target_age_at_acquisition', 
+            color='target_main_category', size='number_of_employees',
+            hover_name='acquired_company', hover_data={'Deal Score': True},
+            template="plotly_dark",
+            labels={"total_funding_usd": "Capitale (USD)", "target_age_at_acquisition": "Età Target"}
+        )
+        st.plotly_chart(fig, use_container_width=True)
+        
+        st.success("Analisi completata con successo.")
