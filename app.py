@@ -119,4 +119,40 @@ if st.button("Genera Raccomandazioni e Analizza Rischio"):
         
         display_df.columns = ['Nome Target', 'Settore', 'Paese', 'Età (Anni)', 'Capitale (USD)', 'RF Deal Score', 'Score_Num']
         
-        # Formattazione
+        # Formattazione professionale dei numeri
+        display_df['Età (Anni)'] = display_df['Età (Anni)'].apply(lambda x: f"{x:.1f}")
+        display_df['Capitale (USD)'] = display_df['Capitale (USD)'].apply(lambda x: f"${int(x):,}")
+        
+        # Funzione per i colori dinamici
+        def color_score(val):
+            try:
+                score = float(str(val).replace('%', ''))
+                if score >= 70: return 'color: #00CC66; font-weight: bold'
+                if score <= 40: return 'color: #FF4B4B; font-weight: bold'
+                return 'color: #FFA500; font-weight: bold'
+            except: return ''
+
+        # Creiamo la tabella finale rimuovendo fisicamente la colonna di supporto Score_Num
+        final_table = display_df.drop(columns=['Score_Num'])
+        
+        st.dataframe(final_table.style.map(color_score, subset=['RF Deal Score']), 
+                     use_container_width=True, 
+                     hide_index=True)
+        
+        # Download Report
+        csv_data = final_table.to_csv(index=False).encode('utf-8')
+        st.download_button("📥 Scarica Report CSV", data=csv_data, file_name=f"MA_Report_{bidder}.csv", mime="text/csv")
+        
+        # GRAFICO INTERATTIVO
+        st.markdown("---")
+        st.subheader("🔍 Mappa Visuale del Mercato (Shortlist)")
+        fig = px.scatter(
+            results, x='total_funding_usd', y='target_age_at_acquisition', 
+            color='target_main_category', size='number_of_employees',
+            hover_name='acquired_company', hover_data={'Deal Score': True},
+            template="plotly_dark",
+            labels={"total_funding_usd": "Capitale Raccolto (USD)", "target_age_at_acquisition": "Età Azienda"}
+        )
+        st.plotly_chart(fig, use_container_width=True)
+        
+        st.success("✅ Pipeline completata. I risultati mostrano aziende simili all'identikit di " + bidder + " ma non ancora acquisite da essa.")
