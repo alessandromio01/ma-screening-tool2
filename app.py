@@ -156,4 +156,4 @@ if st.button("Genera Raccomandazioni e Analizza Rischio"):
         
         st.plotly_chart(fig, use_container_width=True)
         
-        st.success("Analisi completata. I settori e i paesi 'Unknown' sono stati sostituiti con i valori più probabili.")
+        st.success("Analisi completata ✅ ")
