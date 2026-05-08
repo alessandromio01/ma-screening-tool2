@@ -48,6 +48,17 @@ feature_cols = ['target_age_at_acquisition', 'number_of_employees', 'total_fundi
 
 # 4. SIDEBAR
 st.sidebar.title("⚙️ Configurazione Terminale")
+# Calcoliamo la qualità dei dati per ogni Bidder (quanti dati NON-NaN hanno nelle feature chiave)
+# Più acquisizioni complete hanno, più l'identikit è affidabile
+bidder_quality = df.groupby('acquiring_company')[feature_cols].count().sum(axis=1).sort_values(ascending=False)
+sorted_bidders = bidder_quality.index.tolist()
+
+bidder = st.sidebar.selectbox(
+    "Seleziona il Bidder (Ordinati per qualità dati)", 
+    sorted_bidders,
+    help="Le aziende in alto hanno uno storico di acquisizioni con dati più completi.")
+
+n_recs = st.sidebar.slider("Numero di Target (Shortlist)", 1, 15, 5)
 bidder = st.sidebar.selectbox("Seleziona il Bidder", sorted(df['acquiring_company'].unique()))
 n_recs = st.sidebar.slider("Numero di Target (Shortlist)", 1, 15, 5)
 
