@@ -118,7 +118,7 @@ if st.button("Genera Raccomandazioni e Analizza Rischio"):
                 return 'color: #FFA500; font-weight: bold'
             except: return ''
 
-       styled_df = display_df.style.map(color_score, subset=['RF Deal Score']).hide(subset=['Score_Num'], axis="columns")
+        styled_df = display_df.style.map(color_score, subset=['RF Deal Score']).hide(['Score_Num'], axis="columns")
         
         st.dataframe(styled_df, use_container_width=True, hide_index=True)
         
