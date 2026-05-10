@@ -191,4 +191,4 @@ if st.button("Esegui Screening Strategico e Stima Trasparenza"):
         
         st.plotly_chart(fig, use_container_width=True)
         
-        st.success("✅ Analisi completata. I dati mancanti sono stati imputati statisticamente e i risultati bloccati per la riproducibilità.")
+        st.success("Analisi completata✅ ")
