@@ -83,6 +83,9 @@ st.markdown("---")
 if st.button("Esegui Screening Strategico e Stima Trasparenza"):
     with st.spinner("Elaborazione Identikit e simulazione parametri di mercato..."):
         
+        # FISSIAMO IL MERCATO: Garantisce che i risultati siano identici e riproducibili ad ogni click
+        np.random.seed(42)
+        
         # --- STAGE 0: DATA CURATION (Numeri + Categorie) ---
         df_clean = df.copy()
         
@@ -90,7 +93,7 @@ if st.button("Esegui Screening Strategico e Stima Trasparenza"):
         imputer = KNNImputer(n_neighbors=20)
         df_clean[feature_cols] = imputer.fit_transform(df_clean[feature_cols])
         
-        # Reality Noise: Variazione del 10% per eliminare l'effetto "cloni" e aumentare il realismo
+        # Reality Noise: Variazione del 10% (ora STATICA grazie al seed) per eliminare l'effetto "cloni"
         df_clean['total_funding_usd'] = df_clean['total_funding_usd'].apply(lambda x: x * np.random.uniform(0.9, 1.1))
         
         # B. Imputazione Categorica Aggressiva (Settore e Paese)
@@ -130,7 +133,7 @@ if st.button("Esegui Screening Strategico e Stima Trasparenza"):
         c1, c2, c3 = st.columns(3)
         c1.metric("Bidder Sotto Analisi", bidder)
         c2.metric("Target Identificati", n_recs)
-        c3.metric("Stato Pipeline", "Screening Completato")
+        c3.metric("Stato Pipeline", "Screening Riproducibile")
         st.markdown('</div>', unsafe_allow_html=True)
         
         st.subheader("📋 Shortlist Target & Previsione Trasparenza")
@@ -188,4 +191,4 @@ if st.button("Esegui Screening Strategico e Stima Trasparenza"):
         
         st.plotly_chart(fig, use_container_width=True)
         
-        st.success("✅ Analisi completata. I dati mancanti (Unknown/None) sono stati imputati tramite modelli probabilistici di settore.")
+        st.success("✅ Analisi completata. I dati mancanti sono stati imputati statisticamente e i risultati bloccati per la riproducibilità.")
