@@ -434,11 +434,6 @@ st.sidebar.info(
     "la probabilità di price disclosure."
 )
 
-show_technical_details = st.sidebar.checkbox(
-    "Mostra dettagli tecnici",
-    value=False
-)
-
 
 # ============================================================
 # 8. HEADER PRINCIPALE
