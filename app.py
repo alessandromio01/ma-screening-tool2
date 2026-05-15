@@ -19,7 +19,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 st.set_page_config(
     page_title="Tech M&A Screening Tool",
-    page_icon="🎯",
+    page_icon="➤",
     layout="wide"
 )
 
@@ -400,7 +400,7 @@ def generate_recommendations(selected_bidder: str, n_recs: int) -> pd.DataFrame:
 # 7. SIDEBAR
 # ============================================================
 
-st.sidebar.title("⚙️ M&A Screening Terminal")
+st.sidebar.title("M&A Screening Terminal")
 st.sidebar.markdown("---")
 
 # Ordiniamo le bidder per numero di acquisizioni storiche.
@@ -445,7 +445,7 @@ show_technical_details = st.sidebar.checkbox(
 # ============================================================
 
 st.markdown(
-    '<div class="main-title">🎯 Tech M&A Screening Tool</div>',
+    '<div class="main-title">➤ Tech M&A Screening Tool</div>',
     unsafe_allow_html=True
 )
 
@@ -488,7 +488,7 @@ st.markdown(
 # 10. PROFILO BIDDER
 # ============================================================
 
-st.subheader("🏢 Profilo storico della bidder selezionata")
+st.subheader("Profilo storico della bidder selezionata")
 
 bidder_history = df[df["acquiring_company"] == selected_bidder].copy()
 
@@ -546,7 +546,7 @@ with st.expander("Mostra acquisizioni storiche della bidder"):
 
 st.markdown("---")
 
-if st.button("🚀 Esegui screening target", use_container_width=True):
+if st.button("Esegui screening target", use_container_width=True):
 
     with st.spinner("Costruzione profilo bidder e ricerca target simili..."):
 
@@ -568,7 +568,7 @@ if st.button("🚀 Esegui screening target", use_container_width=True):
         # 11.1 TABELLA SHORTLIST
         # ====================================================
 
-        st.subheader("📋 Shortlist target consigliate")
+        st.subheader("Shortlist target consigliate")
 
         display_df = results[
             [
@@ -638,7 +638,7 @@ if st.button("🚀 Esegui screening target", use_container_width=True):
         csv = display_df.to_csv(index=False).encode("utf-8")
 
         st.download_button(
-            label="📥 Scarica shortlist in CSV",
+            label="Scarica shortlist in CSV",
             data=csv,
             file_name=f"screening_{selected_bidder.replace(' ', '_')}.csv",
             mime="text/csv"
@@ -648,7 +648,7 @@ if st.button("🚀 Esegui screening target", use_container_width=True):
         # 11.2 GRAFICO DISTANZE
         # ====================================================
 
-        st.subheader("📉 Target più vicine al profilo storico")
+        st.subheader("Target più vicine al profilo storico")
 
         fig_distance = px.bar(
             results.sort_values("distance", ascending=True),
@@ -672,46 +672,10 @@ if st.button("🚀 Esegui screening target", use_container_width=True):
         st.plotly_chart(fig_distance, use_container_width=True)
 
         # ====================================================
-        # 11.3 MAPPA VISUALE TARGET
+        # 11.3 RANDOM FOREST FEATURE IMPORTANCE
         # ====================================================
 
-        st.subheader("🔍 Mappa visuale della shortlist")
-
-        fig_scatter = px.scatter(
-            results,
-            x="total_funding_usd",
-            y="target_age_at_acquisition",
-            color="target_main_category",
-            size="number_of_employees",
-            hover_name="acquired_company",
-            hover_data={
-                "country_hq": True,
-                "cluster": True,
-                "distance": ":.3f",
-                "rf_deal_score": ":.1f",
-                "total_funding_usd": ":,.0f",
-                "number_of_employees": ":,.0f"
-            },
-            template="plotly_dark",
-            labels={
-                "total_funding_usd": "Funding totale USD",
-                "target_age_at_acquisition": "Età target",
-                "target_main_category": "Categoria",
-                "number_of_employees": "Dipendenti",
-                "rf_deal_score": "RF Price Disclosure Score"
-            },
-            title="Posizionamento delle target nella shortlist"
-        )
-
-        fig_scatter.update_layout(height=550)
-
-        st.plotly_chart(fig_scatter, use_container_width=True)
-
-        # ====================================================
-        # 11.4 RANDOM FOREST FEATURE IMPORTANCE
-        # ====================================================
-
-        st.subheader("🌲 Random Forest: variabili più importanti")
+        st.subheader("Random Forest: variabili più importanti")
 
         top_importance = rf_feature_importance.head(12).copy()
 
@@ -740,7 +704,7 @@ if st.button("🚀 Esegui screening target", use_container_width=True):
 if show_technical_details:
 
     st.markdown("---")
-    st.subheader("🧠 Dettagli tecnici della pipeline")
+    st.subheader("Dettagli tecnici della pipeline")
 
     st.markdown(
         """
